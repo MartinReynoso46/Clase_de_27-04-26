@@ -1,11 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Para Jass</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black; /* Un verde muy suave de fondo */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Arial', sans-serif;
+        }
+        canvas {
+            display: block;
+        }
+        #mensaje {
+            position: absolute;
+            bottom: 20%;
+            font-size: 3rem;
+            color: #2d5a27;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    
+
+    <canvas id="flowerCanvas"></canvas>
+    <div id="mensaje">Te amo, Jass</div>
+
+    <script>
+        const canvas = document.getElementById('flowerCanvas');
+        const ctx = canvas.getContext('2d');
+        const mensaje = document.getElementById('mensaje');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        function dibujarPetalo(x, y, radio, angulo, color) {
+            ctx.beginPath();
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angulo);
+            ctx.fillStyle = color;
+            // Dibujamos un pétalo alargado tipo jazmín
+            ctx.ellipse(0, -radio, radio / 2, radio, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function dibujarJazmin(x, y, tamañoMax) {
+            let tamañoActual = 0;
+            let pétalos = 5;
+
+            function animar() {
+                if (tamañoActual < tamañoMax) {
+                    ctx.clearRect(x - tamañoMax*2, y - tamañoMax*2, tamañoMax*4, tamañoMax*4);
+                    
+                    // Centro amarillo
+                    ctx.beginPath();
+                    ctx.arc(x, y, tamañoActual / 4, 0, Math.PI * 2);
+                    ctx.fillStyle = "#FFD700";
+                    ctx.fill();
+
+                    // Pétalos blancos
+                    for (let i = 0; i < pétalos; i++) {
+                        let angulo = (i * 2 * Math.PI) / pétalos;
+                        dibujarPetalo(x, y, tamañoActual, angulo, "#FFFFFF");
+                    }
+                    
+                    tamañoActual += 0.5;
+                    requestAnimationFrame(animar);
+                } else {
+                    // Mostrar el mensaje cuando terminen de dibujarse
+                    mensaje.style.opacity = "1";
+                }
+            }
+            animar();
+        }
+
+        // Dibujar varios jazmines en posiciones aleatorias
+        setTimeout(() => dibujarJazmin(canvas.width / 2, canvas.height / 2 - 50, 60), 500);
+        setTimeout(() => dibujarJazmin(canvas.width / 2 - 150, canvas.height / 2 + 50, 40), 1500);
+        setTimeout(() => dibujarJazmin(canvas.width / 2 + 150, canvas.height / 2 + 50, 45), 2500);
+
+        // Ajustar canvas si se cambia el tamaño de ventana
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
 </body>
 </html>
